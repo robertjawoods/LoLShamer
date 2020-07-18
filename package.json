@@ -1,0 +1,15 @@
+{
+  "name": "lolshamer",
+  "version": "1.0.0",
+  "description": "A bot to shame and praise LoL players",
+  "main": "bot.js",
+  "author": "Robert Woods",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
+    "eris": "^0.13.3",
+    "express": "^4.17.1",
+    "underscore": "^1.10.2"
+  }
+}
