@@ -16,7 +16,7 @@ const bot = new eris.Client(variables.botToken, {
 });
 
 const getSummonerLevel = function(msg) {
-    let summonerName = msg.content.replace(variables.summonerLevelCommandString, '').trimLeft().trimRight(); 
+    let summonerName = msg.content.replace('!summoner', '').trimLeft().trimRight(); 
 
     let encodedSummonerName = encodeURI(summonerName);
 
@@ -41,7 +41,7 @@ bot.on('messageCreate', async (msg) => {
     if (msg.channel.name !== 'bot_spam')
         return;
 
-    if (msg.content.includes(variables.summonerLevelCommandString))
+    if (msg.content.includes('!summoner'))
         getSummonerLevel(msg);
 });
 
