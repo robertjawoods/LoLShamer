@@ -11,5 +11,8 @@
     "eris": "^0.13.3",
     "express": "^4.17.1",
     "underscore": "^1.10.2"
+  }, 
+  "scripts": {
+    "start": "node bot.js"
   }
 }
