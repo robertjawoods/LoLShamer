@@ -8,7 +8,8 @@ const _ = require('underscore');
 const { json } = require('body-parser');
 
 const bot = new eris.CommandClient(settings.botToken, {}, {
-    prefix: ['!', '[anal]']
+    prefix: ['!', '[anal]', '@mention'], 
+    defaultHelpCommand: true
 });
 
 let boundChannel = undefined;
@@ -103,10 +104,12 @@ bot.on('error', err => {
 
 bot.registerCommand('summonerLevel', (msg, args) =>
 {
-    if (!args[0])
+    if (!args)
         return;
+    
+    let summonerName = args.join(' ');
 
-    riotApi.getSummonerByName(args[0])
+    riotApi.getSummonerByName(summonerName)
     .then((res) => { 
         var data = res.data;
 
@@ -117,13 +120,18 @@ bot.registerCommand('summonerLevel', (msg, args) =>
             msg.channel.createMessage(`Summoner "${args[0]}" doesn't exist, you fucking moron.`);
         }
     });
+}, {
+    usage: '!summonerLevel {summonerName}',
+    description: 'Get a summoner\'s level'
 });
 
 bot.registerCommand('addSummoner', async (msg, args) => { 
-    let summonerName = args[0]; 
-    let discordName = args[1];
+    let summonerName = args.slice(0, args.length - 1);
+    
+    summonerName = summonerName.join(' '); 
+    let discordName = args[args.length - 1];
 
-    if (!(summonerName && discordName) || args.length > 2)    
+    if (!(summonerName && discordName))    
     {
         msg.channel.createMessage('Invalid command format, please use `!addSummoner {summonerName} {discordName}`. Ensure that the discord name is a valid mention.');
         return;
@@ -161,6 +169,9 @@ bot.registerCommand('addSummoner', async (msg, args) => {
     writeSettings();
 
     msg.channel.createMessage(`Summoner "${summonerName}" has been added.`);
+}, {
+    usage: '!addSummoner {summonerName} {discordMention}', 
+    description: 'Adds a summoner to the watch list'
 });
 
 bot.registerCommand("removeSummoner", (msg, args) => { 
@@ -186,6 +197,9 @@ bot.registerCommand("removeSummoner", (msg, args) => {
     writeSettings();
 
     msg.channel.createMessage(`Summoner "${summonerName}" has been removed.`);
+}, {
+    usage: '!removeSummoner {summonerName}',
+    description: 'Removes a summoner from the watch list'
 });
 
 bot.registerCommand('setChannel', (msg, args) => {
@@ -204,6 +218,9 @@ bot.registerCommand('setChannel', (msg, args) => {
     writeSettings();
 
     msg.channel.createMessage(`I have been bound to #${boundChannel.name}... release me, human.`);
+}, {
+    usage: '!setChannel {channelHashtag}', 
+    description: 'Sets a channel for bot announcements'
 });
 
 bot.registerCommand("addMessage", (msg, args) => {
@@ -224,6 +241,9 @@ bot.registerCommand("addMessage", (msg, args) => {
      });
 
     msg.channel.createMessage(`Message has been added. Example: "${messageFormatted.format('Faker', 18)}"`);
+}, {
+    usage: '!addMessage "{message}" Example: "{0} died {1} times"', 
+    description: 'Adds a new message template to announcement list'
 })
 
 bot.registerCommand('displaySettings', (msg) => { 
@@ -253,6 +273,9 @@ bot.registerCommand('displaySettings', (msg) => {
     msg.channel.createMessage({
         embed: discordEmbed
     });
+}, {
+    usage: '!displaySettings', 
+    description: 'Displays the current settings'
 });
 
 bot.registerCommand('editSetting', (msg, args) => { 
@@ -303,6 +326,9 @@ bot.registerCommand('editSetting', (msg, args) => {
     writeSettings(); 
 
     msg.channel.createMessage(`Setting \`${settingName}\` has been changed. Old value: \`${oldSettingValue}\` New value: \`${settingValueConverted}\``);
+}, {
+    usage: '!editSetting {settingName} {newValue}', 
+    description: 'Edit a setting'
 });
 
 bot.connect();
