@@ -5,22 +5,53 @@ const messages = require('./messages.json').messages;
 const riotApi = require('./riotApi');
 const messageService = require('./messageService');
 const _ = require('underscore');
-const { json } = require('body-parser');
+const sql = require('mssql');
+const { config } = require('process');
 
 const bot = new eris.CommandClient(settings.botToken, {}, {
-    prefix: ['!', '[anal]', '@mention'], 
+    prefix: ['!', '@mention'], 
     defaultHelpCommand: true
 });
 
+
+
 let boundChannel = undefined;
+let sqlPool = undefined;
 let settingsFilter = ['riotApiBaseUrl', 'riotApiToken', 'botToken', 'summoners', 'boundChannelId'];
 
-function writeSettings() {
+function getSettings() { 
+    sql.connect(config, function (err) {    
+        if (err) console.log(err);
+
+        // create Request object
+        var request = new sql.Request();
+           
+        // query to the database and get the records
+        request.query('select * from Student', function (err, recordset) {
+            
+            if (err) console.log(err)
+
+            // send records as a response
+            res.send(recordset);
+            
+        });
+    });
+}
+
+bot.on('guildCreate', guild => {
+
+});
+
+async function writeSettings() {
     let data = JSON.stringify(settings);
 
     fs.writeFile('./settings.json', data, err => {
        if (err) console.log(err);
     });
+
+    let guildId = bot.channelGuildMap.
+
+    pool.request().query('insert into ')
 }
 
 function getParticipantDetails(accountId, match) { 
@@ -83,6 +114,13 @@ bot.on('ready', () => {
     boundChannel = bot.getChannel(settings.boundChannelId);
 
     boundChannel.createMessage('I\'m alive!');
+
+    sqlPool = sql.connect({
+        user: 'lol-shamer',
+        password: 'lolshamer123',
+        server: '35.187.79.60', 
+        database: 'default' 
+    });
 
     bot.editStatus('dnd', { 
         name: 'scrubs try to play LoL', 
