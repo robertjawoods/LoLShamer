@@ -1,27 +1,18 @@
 const eris = require('eris');
 const fs = require('fs');
 const settings = require('./settings.json');
-const riotApi = require('./riotApi')
 const messages = require('./messages.json').messages;
+const riotApi = require('./riotApi');
+const messageService = require('./messageService');
 const _ = require('underscore');
+const { json } = require('body-parser');
 
-const bot = new eris.CommandClient(settings.botToken, {
-    prefix:'!'
+const bot = new eris.CommandClient(settings.botToken, {}, {
+    prefix: ['!', '[anal]']
 });
 
 let boundChannel = undefined;
-
-if (!String.prototype.format) {
-    String.prototype.format = function() {
-      var args = arguments;
-      return this.replace(/{(\d+)}/g, function(match, number) { 
-        return typeof args[number] != 'undefined'
-          ? args[number]
-          : match
-        ;
-      });
-    };
-  }
+let settingsFilter = ['riotApiBaseUrl', 'riotApiToken', 'botToken', 'summoners', 'boundChannelId'];
 
 function writeSettings() {
     let data = JSON.stringify(settings);
@@ -41,12 +32,6 @@ function getParticipantDetails(accountId, match) {
     );
 
     return participantDetails;
-}
-
-function writeFeederMessage(deathCount, discordName) {
-    let message = _.sample(messages);
-
-    boundChannel.createMessage(message.format(discordName, deathCount));
 }
 
 function isFeeding() {
@@ -72,13 +57,11 @@ function isFeeding() {
         .then(match => { 
             let matchDetails = match.data;
             let participantDetails = getParticipantDetails(accountId, matchDetails);
-            let particpantTeam = participantDetails.teamId;
-            let didWin = _.find(matchDetails.teams, team => team.teamId === particpantTeam).win === 'Win';
-            let deathCount = participantDetails.stats.deaths;
+            
+            let message = messageService.createMessage(matchDetails, participantDetails, summoner);
 
-            if (!didWin && deathCount >= settings.feedingDeathThreshold)
-                writeFeederMessage(deathCount, summoner.discordName);
-
+            if (message)
+                boundChannel.createMessage(message);
         })
         .catch(err => {
             if (err.config.url.includes('lol/match/v4/matchlists/by-account/')) 
@@ -97,6 +80,20 @@ setInterval(isFeeding, settings.checkInterval * 60000);
 
 bot.on('ready', () => {
     boundChannel = bot.getChannel(settings.boundChannelId);
+
+    boundChannel.createMessage('I\'m alive!');
+
+    bot.editStatus('dnd', { 
+        name: 'scrubs try to play LoL', 
+        type: 3
+    });
+
+    let avi = fs.readFileSync('./avatar.jpg', {encoding: 'base64'});
+
+    bot.editSelf({
+        avatar: `data:image/jpeg;base64,${avi}`
+    }).catch(err => console.log(err));
+
     console.log("Ready");
 }); 
 
@@ -104,7 +101,7 @@ bot.on('error', err => {
     console.warn(err);
 });
 
-bot.registerCommand('!summonerLevel', (msg, args) =>
+bot.registerCommand('summonerLevel', (msg, args) =>
 {
     if (!args[0])
         return;
@@ -122,7 +119,7 @@ bot.registerCommand('!summonerLevel', (msg, args) =>
     });
 });
 
-bot.registerCommand('!addSummoner', async (msg, args) => { 
+bot.registerCommand('addSummoner', async (msg, args) => { 
     let summonerName = args[0]; 
     let discordName = args[1];
 
@@ -146,16 +143,28 @@ bot.registerCommand('!addSummoner', async (msg, args) => {
     if (!summonerFound)
         return;
 
+    let alreadyAdded = _.find(settings.summoners, (summoner) => { 
+        return summoner.summonerName === summonerName;
+    });
+
+    if (alreadyAdded)
+    {
+        msg.channel.createMessage(`What sort of moron tries to add someone twice? Summoner "${summonerName}" is already added.`)
+        return;
+    }
+
     settings.summoners.push({
         "summonerName": summonerName, 
         "discordName": discordName
     });
 
     writeSettings();
+
+    msg.channel.createMessage(`Summoner "${summonerName}" has been added.`);
 });
 
-bot.registerCommand("!removeSummoner", (msg, args) => { 
-    let summonerName = args[0]; 
+bot.registerCommand("removeSummoner", (msg, args) => { 
+    let summonerName = args[0].trimLeft().trimRight(); 
 
     if (!summonerName)
     {
@@ -168,16 +177,18 @@ bot.registerCommand("!removeSummoner", (msg, args) => {
 
     if (summonerIndex === -1)
     {
-        msg.channel.createMessage('This command can only be used to remove existing summoners');
+        msg.channel.createMessage('This command can only be used to remove existing summoners, dipshit.');
         return;
     }
 
     settings.summoners.splice(summonerIndex, 1);
 
     writeSettings();
+
+    msg.channel.createMessage(`Summoner "${summonerName}" has been removed.`);
 });
 
-bot.registerCommand('!setChannel', (msg, args) => {
+bot.registerCommand('setChannel', (msg, args) => {
     let channelId = args[0];
 
     if (!channelId)
@@ -187,12 +198,16 @@ bot.registerCommand('!setChannel', (msg, args) => {
     channelId = channelId.substr(2, channelId.length).replace('>', '');
 
     settings.boundChannelId = channelId;
+    
+    boundChannel = bot.getChannel(settings.boundChannelId);
 
     writeSettings();
+
+    msg.channel.createMessage(`I have been bound to #${boundChannel.name}... release me, human.`);
 });
 
-bot.registerCommand("!addMessage", (msg, args) => {
-    let message = args[0]; 
+bot.registerCommand("addMessage", (msg, args) => {
+    let message = args.join(' '); 
 
     if (!message.includes('{0}') || !message.includes('{1}'))
     {
@@ -200,13 +215,94 @@ bot.registerCommand("!addMessage", (msg, args) => {
         return;
     }
 
-    let messageFormatted = message.replace('"', '');
+    let messageFormatted = message.replace('"', '').replace('"', '');
 
     messages.push(messageFormatted);
-    
-    fs.writeFile('./messages.json', JSON.stringify({"messages":messages}, err => {
+
+    fs.writeFile('./messages.json', JSON.stringify({"messages":messages}), err => {
         if (err) console.log(err);
-    }))
+     });
+
+    msg.channel.createMessage(`Message has been added. Example: "${messageFormatted.format('Faker', 18)}"`);
 })
+
+bot.registerCommand('displaySettings', (msg) => { 
+    let settingsFields = [{
+        name: 'boundChannel', 
+        value: boundChannel.name
+    }]; 
+
+    for (setting in settings) {
+        if (settingsFilter.includes(setting))
+            continue;
+
+        settingsFields.push({
+            name: setting, 
+            value: settings[setting]
+        });
+    }
+
+    let discordEmbed = {
+        title: 'Current Setting Values', 
+        description: 'Displays the current settings values. Use `!editSetting {settingName} {newValue} to edit`.',
+        color: 26367,
+        type: 'rich', 
+        fields:settingsFields
+    }; 
+
+    msg.channel.createMessage({
+        embed: discordEmbed
+    });
+});
+
+bot.registerCommand('editSetting', (msg, args) => { 
+    let settingName = args[0]; 
+    let newSettingValue = args[1]; 
+
+    if (!settingName || !newSettingValue)
+    {
+        msg.channel.createMessage('Incorrect format. Use `!editSetting {settingName} {newValue} to edit`.');
+        return;
+    }
+
+    if (settingsFilter.includes(settingName))
+    {
+        msg.channel.createMessage('Cannot edit this setting using this command');
+        return;
+    }
+
+    if (!settings[settingName])
+    {
+        msg.channel.createMessage('Setting doesn\'t exist. Use `!displaySettings` to see valid settings.');
+        return;
+    }
+
+    let validSettingsValueTypes = [{
+            type: Number, 
+            settingNames: ['gamesInTheLastMinutes', 'feedingDeathThreshold' ,'checkInterval']
+    }];
+
+    let settingType = _.find(validSettingsValueTypes, (setting) => {
+        return setting.settingNames.includes(settingName);
+    }).type;
+
+    let settingValueConverted = undefined;
+    try { 
+         settingValueConverted = settingType(newSettingValue);
+
+         if (!settingValueConverted)
+            throw newSettingValue;
+    } catch (value) {
+        msg.channel.createMessage(`Cannot set value to \`${newSettingValue}\`. Type needs to be \`${settingType.name}\``);
+        return;
+    }
+
+    let oldSettingValue = settings[settingName];
+    settings[settingName] = settingValueConverted;
+
+    writeSettings(); 
+
+    msg.channel.createMessage(`Setting \`${settingName}\` has been changed. Old value: \`${oldSettingValue}\` New value: \`${settingValueConverted}\``);
+});
 
 bot.connect();
