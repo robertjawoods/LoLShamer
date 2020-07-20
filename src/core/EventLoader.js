@@ -11,7 +11,7 @@ class EventLoader {
             const evt = require(file);
             const event = new evt(erisBot);
 
-            erisBot.on(event.name, event.exec);
+            erisBot.on(event.name, e =>  event.exec(e));
 
             console.log(`Event ${event.name} loaded`);
         }

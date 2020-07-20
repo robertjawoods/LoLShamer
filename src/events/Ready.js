@@ -9,14 +9,14 @@ module.exports = class Ready {
     }
 
     async exec() { 
-        this.editStatus('dnd', { 
+        this.bot.editStatus('dnd', { 
             name: 'scrubs try to play LoL', 
             type: 3
         });
     
         const avi = fs.readFileSync('./avatar.jpg', {encoding: 'base64'});
     
-        this.editSelf({
+        this.bot.editSelf({
             avatar: `data:image/jpeg;base64,${avi}`
         }).catch(err => console.log(err));
     
