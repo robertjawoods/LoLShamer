@@ -1,13 +1,16 @@
 'use strict'; 
 
-const erisBot = require('./core/ErisBot'); 
-const commandLoader = require('./core/CommandLoader');
-const eventLoader = require('./core/EventLoader');
+const Chariot = require('chariot.js');
 
-const run = async () => { 
-    await commandLoader.loadCommands(erisBot);
-    await eventLoader.loadEvents(erisBot);
-    await erisBot.connect();
-};
+class LoLShamer extends Chariot.Client { 
+    constructor() {
+        super (new Chariot.Config(process.env.BOT_TOKEN,
+            {
+                prefix: 'c!', 
+                defaultHelpCommand: true,
+                owner: ['123495583397707776']
+            }));
+    }
+}
 
-run();
+module.exports = new LoLShamer();

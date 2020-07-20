@@ -1,15 +1,19 @@
 'use strict'
 
-class SetChannel { 
+const Chariot = require('chariot.js');
+
+class SetChannel extends Chariot.Command { 
     constructor() {
-        this.commandText = 'setChannel'; 
-        this.options = {
+        super(); 
+
+        this.name = 'setChannel'; 
+        this.help = {
             usage: '!setChannel {channelHashtag}', 
             description: 'Sets a channel for bot announcements'
         }
     }
 
-    async exec(msg, args) {
+    async execute(msg, args) {
         let channelId = args[0];
 
         if (!channelId)

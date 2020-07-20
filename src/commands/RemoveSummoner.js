@@ -1,17 +1,21 @@
 'use strict';
 
 const riotApi = require('../core/RiotApi');
+const Chariot = require('chariot.js');
+const { extend } = require('underscore');
 
-class RemoveSummoner {
+class RemoveSummoner extends Chariot.Command {
     constructor() {
-        this.commandText = 'removeSummoner';
-        this.options = {
+        super();
+
+        this.name = 'removeSummoner';
+        this.help = {
             usage: '!removeSummoner {summonerName}',
             description: 'Removes a summoner from the watch list'
         };
     }
 
-    async exec(msg, args) {
+    async execute(msg, args, chariot) {
         let summonerName = args[0].trimLeft().trimRight();
 
         if (!summonerName) {

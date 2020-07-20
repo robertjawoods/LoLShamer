@@ -1,11 +1,15 @@
 'use strict'; 
 
-module.exports = class Error { 
+const Chariot = require('chariot.js');
+
+class Error extends Chariot.Event { 
     constructor() { 
-        this.name = 'error';
+        super('error');
     }
 
-    async exec(err) { 
+    async execute(err) { 
         console.log(err);
     }
 };
+
+module.exports = new Error();

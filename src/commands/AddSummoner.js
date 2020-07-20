@@ -1,17 +1,20 @@
 'use strict'; 
 
 const riotApi = require('../core/RiotApi');
+const Chariot = require('chariot.js');
 
-class AddSummoner {
+class AddSummoner extends Chariot.Command {
     constructor() { 
-        this.commandText = 'addSummoner';
-        this.options = { 
+        super();
+
+        this.name = 'addSummoner';
+        this.help = { 
             usage: '!addSummoner {summonerName} {discordMention}', 
             description: 'Adds a summoner to the watch list'
       }
     }
 
-    async exec(msg, args) { 
+    async execute(msg, args, chariot) { 
         let summonerName = args.slice(0, args.length - 1);
     
         summonerName = summonerName.join(' '); 

@@ -1,17 +1,18 @@
-'use strict';
-
 const riotApi = require('../core/RiotApi');
+const Chariot = require('chariot.js');
 
-class SummonerLevel {
+class SummonerLevel extends Chariot.Command {
     constructor() {
-        this.commandText = 'summonerLevel';
-        this.options = {
+        super();
+
+        this.name = 'summonerLevel';
+        this.help = {
             usage: '!summonerLevel {summonerName}',
             description: 'Get a summoner\'s level'
         };
     }
 
-    async exec(msg, args) {
+    async execute(message, args, chariot) {
         if (!args)
             return;
 
@@ -21,14 +22,10 @@ class SummonerLevel {
             .then((res) => {
                 var data = res.data;
 
-                msg.channel.createMessage(`Summoner ${data.name} is level ${data.summonerLevel}... what a scrub.`);
+                message.channel.createMessage(`Summoner ${data.name} is level ${data.summonerLevel}... what a scrub.`);
             })
             .catch((err) => {
                 console.log(err);
-
-                // if (err.response.status === 404) {
-                //     msg.channel.createMessage(`Summoner "${summonerName}" doesn't exist, you fucking moron.`);
-                // }
             });
     }
 }

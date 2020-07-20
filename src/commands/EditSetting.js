@@ -1,15 +1,19 @@
 'use strict'; 
 
-class EditSetting { 
+const Chariot = require('chariot.js');
+
+class EditSetting extends Chariot.Command { 
     constructor() { 
-        this.commandText = 'editSetting';
-        this.options = { 
+        super();
+
+        this.name = 'editSetting';
+        this.help  = { 
             usage: '!editSetting {settingName} {newValue}', 
             description: 'Edit a setting'
         }
     }
     
-    async exec(msg, args) { 
+    async execute(msg, args, chariot) { 
         let settingName = args[0]; 
         let newSettingValue = args[1]; 
     

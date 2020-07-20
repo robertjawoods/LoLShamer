@@ -1,9 +1,13 @@
 'use strict';
 
-class DisplaySettings {
+const Chariot = require('chariot.js');
+
+class DisplaySettings extends Chariot.Command {
     constructor() {
-        this.commandText = 'displaySettings';
-        this.options = {
+        super();
+
+        this.name = 'displaySettings';
+        this.help = {
             usage: '!displaySettings',
             description: 'Displays the current settings'
         };
@@ -15,7 +19,7 @@ class DisplaySettings {
         }
     }
 
-    async exec(msg, args) { 
+    async execute(msg, args, chariot) { 
         let settingsFields = [{
             name: 'boundChannel', 
             value: boundChannel.name

@@ -1,25 +1,29 @@
 'use strict'; 
 
 const fs = require('fs');
+const Chariot = require('chariot.js');
 
-module.exports = class Ready { 
-    constructor(erisBot) {
-        this.name = 'ready';
-        this.bot = erisBot;
+class Ready extends Chariot.Event { 
+    constructor() {
+        super('ready');
     }
 
-    async exec() { 
-        this.bot.editStatus('dnd', { 
+    async execute() { 
+        this.client.editStatus('online', { 
             name: 'scrubs try to play LoL', 
             type: 3
         });
     
         const avi = fs.readFileSync('./avatar.jpg', {encoding: 'base64'});
     
-        this.bot.editSelf({
+        this.client.editSelf({
             avatar: `data:image/jpeg;base64,${avi}`
-        }).catch(err => console.log(err));
+        }).catch(err => {});
     
         console.log("Ready");
+        console.log(this.client.commands);
+        console.log(this.client.prefix);
     }
-};
+}
+
+module.exports = new Ready();
