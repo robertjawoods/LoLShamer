@@ -2,7 +2,7 @@
 
 class SetChannel { 
     constructor() {
-        this.commandLabel = 'setChannel'; 
+        this.commandText = 'setChannel'; 
         this.options = {
             usage: '!setChannel {channelHashtag}', 
             description: 'Sets a channel for bot announcements'

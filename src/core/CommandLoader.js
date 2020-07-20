@@ -7,7 +7,7 @@ class CommandLoader {
     async loadCommands(erisBot) { 
         let commandFiles = await utilities.getFileNames(path.join(__dirname, './../Commands'));
    
-        for (file of commandFiles) { 
+        for (const file of commandFiles) { 
             const command = require(file);
 
             erisBot.registerCommand(command.commandText, command.exec, command.options);

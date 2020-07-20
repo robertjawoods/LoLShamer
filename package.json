@@ -16,6 +16,7 @@
     "underscore": "^1.10.2"
   },
   "scripts": {
-    "start": "node bot.js"
+    "start": "node index.js",
+    "create-env": "printenv > .env"
   }
 }

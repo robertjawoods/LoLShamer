@@ -1,0 +1,14 @@
+steps:
+- name: node:10.15.1
+  entrypoint: npm
+  args: ["install"]
+- name: node:10.15.1
+  entrypoint: npm
+  args: ["run", "create-env"]
+  env:
+    - 'BOT_TOKEN=${_BOT_TOKEN}'
+    - 'RIOT_API_KEY=${_RIOT_API_KEY}'
+    - 'RIOT_API_BASE_URL=${_RIOT_API_BASE_URL}'
+- name: "gcr.io/cloud-builders/gcloud"
+  args: ["app", "deploy"]
+timeout: "1600s"

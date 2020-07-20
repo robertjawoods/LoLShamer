@@ -8,12 +8,12 @@ class Utilites {
         const result = []; 
         const files = fs.readdirSync(directory); 
         
-        for (file in files) { 
-            const path = path.join(directory, file); 
+        for (const file of files) { 
+            const filePath = path.join(directory, file); 
 
-            result.push(fs.statSync(path).isDirectory() 
-                ? await this.getFileNames(path)
-                : path
+            result.push(fs.statSync(filePath).isDirectory() 
+                ? await this.getFileNames(filePath)
+                : filePath
             );
         }
 

@@ -24,9 +24,11 @@ class SummonerLevel {
                 msg.channel.createMessage(`Summoner ${data.name} is level ${data.summonerLevel}... what a scrub.`);
             })
             .catch((err) => {
-                if (err.response.status === 404) {
-                    msg.channel.createMessage(`Summoner "${summonerName}" doesn't exist, you fucking moron.`);
-                }
+                console.log(err);
+
+                // if (err.response.status === 404) {
+                //     msg.channel.createMessage(`Summoner "${summonerName}" doesn't exist, you fucking moron.`);
+                // }
             });
     }
 }

@@ -11,8 +11,7 @@ class DisplaySettings {
             title: 'Current Setting Values',
             description: 'Displays the current settings values. Use `!editSetting {settingName} {newValue} to edit`.',
             color: 26367,
-            type: 'rich',
-            fields: settingsFields
+            type: 'rich'
         }
     }
 

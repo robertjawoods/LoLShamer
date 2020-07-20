@@ -106,3 +106,4 @@ dist
 .gcloudignore
 .git
 .gitignore
+.env

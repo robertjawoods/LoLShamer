@@ -28,3 +28,5 @@ class AddMessage {
         msg.channel.createMessage(`Message has been added. Example: "${messageFormatted.format('Faker', 18)}"`);
     }
 }
+
+module.exports = new AddMessage();
