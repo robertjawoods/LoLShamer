@@ -7,9 +7,9 @@ class AddSummoner extends Chariot.Command {
     constructor() { 
         super();
 
-        this.name = 'addSummoner';
+        this.name = 'addsummoner';
         this.help = { 
-            usage: '!addSummoner {summonerName} {discordMention}', 
+            usage: '!addsummoner {summonerName} {discordMention}', 
             description: 'Adds a summoner to the watch list'
       }
     }

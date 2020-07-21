@@ -5,17 +5,23 @@ class SummonerLevel extends Chariot.Command {
     constructor() {
         super();
 
-        this.name = 'summonerLevel';
+        this.name = 'summonerlevel';
         this.help = {
-            usage: '!summonerLevel {summonerName}',
+            usage: '!ls summonerlevel {summonerName}',
             description: 'Get a summoner\'s level'
         };
     }
 
-    async execute(message, args, chariot) {
-        if (!args)
+    async runPreconditions(message, args, chariot, next) { 
+        if (!args.length) {
+            message.channel.createMessage("Please enter a summoner name.");
             return;
+        }
 
+        next();
+    }
+
+    async execute(message, args, chariot) {
         let summonerName = args.join(' ');
 
         riotApi.getSummonerByName(summonerName)

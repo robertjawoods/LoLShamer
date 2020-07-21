@@ -6,7 +6,7 @@ class LoLShamer extends Chariot.Client {
     constructor() {
         super (new Chariot.Config(process.env.BOT_TOKEN,
             {
-                prefix: 'c!', 
+                prefix: '!ls ', 
                 defaultHelpCommand: true,
                 owner: ['123495583397707776']
             }));

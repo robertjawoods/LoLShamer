@@ -8,7 +8,7 @@ class Debug extends Chariot.Event {
     }
 
     async execute(message, id) { 
-        console.log(message);
+        //console.log(message);
     }
 };
 

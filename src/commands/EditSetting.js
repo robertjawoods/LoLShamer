@@ -6,9 +6,9 @@ class EditSetting extends Chariot.Command {
     constructor() { 
         super();
 
-        this.name = 'editSetting';
+        this.name = 'editsetting';
         this.help  = { 
-            usage: '!editSetting {settingName} {newValue}', 
+            usage: '!editsetting {settingName} {newValue}', 
             description: 'Edit a setting'
         }
     }

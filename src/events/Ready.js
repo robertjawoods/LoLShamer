@@ -14,12 +14,6 @@ class Ready extends Chariot.Event {
             type: 3
         });
     
-        const avi = fs.readFileSync('./avatar.jpg', {encoding: 'base64'});
-    
-        this.client.editSelf({
-            avatar: `data:image/jpeg;base64,${avi}`
-        }).catch(err => {});
-    
         console.log("Ready");
         console.log(this.client.commands);
         console.log(this.client.prefix);
