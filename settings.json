@@ -1,1 +1,16 @@
-{"summoners":[{"summonerName":"Aströ","discordName":"<@123495583397707776>"},{"summonerName":"iż meister","discordName":"<@204212034311553025>"}],"boundChannelId":"444610800066232330","botToken":"NzM0MDY0MzEwOTUwNjkwODQ3.XxMQ7g.Z-Vg_jgE0aMAru76kH97xPckqNA","riotApiToken":"RGAPI-5b77d8e1-2d6f-4ff0-84a9-288304bf3cf6","riotApiBaseUrl":"https://euw1.api.riotgames.com","gamesInTheLastMinutes":90,"feedingDeathThreshold":10,"checkInterval":10}
+{
+    "summoners": [
+        {
+            "summonerName": "Aströ",
+            "discordName": "<@123495583397707776>"
+        },
+        {
+            "summonerName": "iż meister",
+            "discordName": "<@204212034311553025>"
+        }
+    ],
+    "boundChannelId": "444610800066232330",
+    "gamesInTheLastMinutes": 90,
+    "feedingDeathThreshold": 10,
+    "checkInterval": 10
+}
