@@ -7,8 +7,10 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/debug-agent": "^5.1.2",
+    "@google-cloud/logging-bunyan": "^3.0.0",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
+    "bunyan": "^1.8.14",
     "chariot.js": "^3.3.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

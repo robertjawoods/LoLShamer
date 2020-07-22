@@ -1,10 +1,13 @@
 'use strict'; 
 
 const Chariot = require('chariot.js');
+const logger = require('./core/Logger')
 
 class LoLShamer extends Chariot.Client { 
     constructor() {
-        super (new Chariot.Config('egge',
+        logger.info(process.env);
+
+        super (new Chariot.Config(process.env.BOT_TOKEN,
             {
                 prefix: '!ls ', 
                 defaultHelpCommand: true,
