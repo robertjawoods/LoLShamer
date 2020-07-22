@@ -11,7 +11,7 @@ steps:
     - 'RIOT_API_BASE_URL=${_RIOT_API_BASE_URL}'
 - name: node:12.18.2
   entrypoint: npm 
-  args: ["run", "build"]
+  args: ["build"]
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy"]
 timeout: "1600s"
