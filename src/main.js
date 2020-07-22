@@ -4,8 +4,6 @@ const Chariot = require('chariot.js');
 
 class LoLShamer extends Chariot.Client { 
     constructor() {
-        console.log(process.env);
-
         super (new Chariot.Config(process.env.BOT_TOKEN,
             {
                 prefix: '!ls ', 

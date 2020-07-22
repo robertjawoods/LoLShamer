@@ -8,9 +8,9 @@ class RemoveSummoner extends Chariot.Command {
     constructor() {
         super();
 
-        this.name = 'removeSummoner';
+        this.name = 'removesummoner';
         this.help = {
-            usage: '!removeSummoner {summonerName}',
+            usage: '!removesummoner {summonerName}',
             description: 'Removes a summoner from the watch list'
         };
     }

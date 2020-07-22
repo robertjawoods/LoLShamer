@@ -6,7 +6,7 @@ class SetChannel extends Chariot.Command {
     constructor() {
         super(); 
 
-        this.name = 'setChannel'; 
+        this.name = 'setchannel'; 
         this.help = {
             usage: '!setChannel {channelHashtag}', 
             description: 'Sets a channel for bot announcements'

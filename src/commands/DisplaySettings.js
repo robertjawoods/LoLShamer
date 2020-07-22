@@ -6,9 +6,9 @@ class DisplaySettings extends Chariot.Command {
     constructor() {
         super();
 
-        this.name = 'displaySettings';
+        this.name = 'displaysettings';
         this.help = {
-            usage: '!displaySettings',
+            usage: '!displaysettings',
             description: 'Displays the current settings'
         };
         this.embedOptions = {
