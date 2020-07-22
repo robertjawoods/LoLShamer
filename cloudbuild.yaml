@@ -1,17 +1,14 @@
 steps:
-- name: npm-install
+- name: node:12.18.2
   entrypoint: npm
   args: ["install"]
-- name: npm-create-env-vars
+- name: node:12.18.2
   entrypoint: npm
   args: ["run", "create-env"]
   env:
-    - "BOT_TOKEN=${_BOT_TOKEN}"
-    - "RIOT_API_KEY=${_RIOT_API_KEY}"
-    - "RIOT_API_BASE_URL=${_RIOT_API_BASE_URL}"
-- name: npm-run-build
-  entrypoint: npm
-  args: ["run", "build"]
+    - 'BOT_TOKEN=${_BOT_TOKEN}'
+    - 'RIOT_API_KEY=${_RIOT_API_KEY}'
+    - 'RIOT_API_BASE_URL=${_RIOT_API_BASE_URL}'
 - name: "gcr.io/cloud-builders/gcloud"
   args: ["app", "deploy"]
 timeout: "1600s"
