@@ -11,35 +11,27 @@ class DisplaySettings extends Chariot.Command {
             usage: '!displaysettings',
             description: 'Displays the current settings'
         };
-        this.embedOptions = {
-            title: 'Current Setting Values',
-            description: 'Displays the current settings values. Use `!editSetting {settingName} {newValue} to edit`.',
-            color: 26367,
-            type: 'rich'
-        }
-    }
+     }
 
     async execute(msg, args, chariot) { 
-        let settingsFields = [{
-            name: 'boundChannel', 
-            value: boundChannel.name
-        }]; 
-    
-        for (setting in settings) {
+        let settings = this.client.settings[msg.guild.id];
+
+        let embed = new Chariot.RichEmbed()
+        .setColor('BLURPLE')
+        .setTitle('Current Setting Values')
+        .setDescription('Displays the current settings values. Use `!editSetting {settingName} {newValue} to edit`.')
+        .addField('boundChannel', settings.boundChannel ? settings.boundChannel.name : 'None')       
+
+        let settingsFilter = ['summoners', 'boundChannelId'];
+
+        for (const setting in settings) {
             if (settingsFilter.includes(setting))
                 continue;
     
-            settingsFields.push({
-                name: setting, 
-                value: settings[setting]
-            });
+            embed.addField(setting, settings[setting]);
         }
-    
-        this.embedOptions.fields = settingsFields;
-    
-        msg.channel.createMessage({
-            embed: this.embedOptions
-        });
+
+        msg.channel.createEmbed(embed);
     }
 }
 

@@ -9,23 +9,24 @@ class AddSummoner extends Chariot.Command {
 
         this.name = 'addsummoner';
         this.help = { 
-            usage: '!addsummoner {summonerName} {discordMention}', 
+            usage: '!addsummoner {discordMention} {summonerName}', 
             description: 'Adds a summoner to the watch list'
       }
     }
 
-    async execute(msg, args, chariot) { 
-        let summonerName = args.slice(0, args.length - 1);
-    
-        summonerName = summonerName.join(' '); 
-        let discordName = args[args.length - 1];
-    
-        if (!(summonerName && discordName))    
-        {
-            msg.channel.createMessage('Invalid command format, please use `!addSummoner {summonerName} {discordName}`. Ensure that the discord name is a valid mention.');
+    async runPreconditions(message, args, chariot, next)  {
+        if (args.length < 2) {            
+            message.channel.createMessage('Invalid command format, please use `!addSummoner {discordName} {summonerName}`. Ensure that the discord name is a valid mention.');
             return;
-        }
-    
+        }      
+
+        next();
+    }
+
+    async execute(msg, args, chariot) { 
+        let discordName = args[0];
+        let summonerName = args.slice(1, args.length).join(' ');
+
         let summonerFound = false;
         await riotApi.getSummonerByName(summonerName)      
         .then(() => {
@@ -39,23 +40,26 @@ class AddSummoner extends Chariot.Command {
     
         if (!summonerFound)
             return;
+
+        let summoners = this.client.settings[msg.channel.guild.id].summoners;
+
+        console.log(summoners.summoners);
     
-        let alreadyAdded = _.find(settings.summoners, (summoner) => { 
-            return summoner.summonerName === summonerName;
-        });
+        let alreadyAdded = summoners.find(s => s.summonerName === summonerName);
     
         if (alreadyAdded)
         {
             msg.channel.createMessage(`What sort of moron tries to add someone twice? Summoner "${summonerName}" is already added.`)
             return;
-        }
-    
-        settings.summoners.push({
-            "summonerName": summonerName, 
-            "discordName": discordName
+        }   
+        
+        summoners.push({
+            summonerName: summonerName, 
+            discordName: discordName,
+            inDatabase: false
         });
 
-        // write settings
+        await this.client.settings[msg.guild.id].writeSummoners(msg.guild.id, this.client.pool);
 
         msg.channel.createMessage(`Summoner "${summonerName}" has been added.`);
     }

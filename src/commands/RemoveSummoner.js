@@ -15,27 +15,29 @@ class RemoveSummoner extends Chariot.Command {
         };
     }
 
-    async execute(msg, args, chariot) {
+    async runPreconditions(msg, args, chariot, next) { 
         let summonerName = args[0].trimLeft().trimRight();
+        let summoners = this.client.settings[msg.guild.id].summoners;
 
         if (!summonerName) {
             msg.channel.createMessage('Please input summoner name: `!removeSummoner {summonerName}`');
             return;
         }
 
-        let summonerIndex = _.findIndex(settings.summoners, summoner =>
-            summoner.summonerName === summonerName);
+        let summoner = summoners.find(summoner => summoner.summonerName === summonerName);
 
-        if (summonerIndex === -1) {
+        if (!summoner) {
             msg.channel.createMessage('This command can only be used to remove existing summoners, dipshit.');
             return;
         }
 
-        settings.summoners.splice(summonerIndex, 1);
+        next(summoner.summonerName);
+    }
 
-        //writeSettings();
+    async execute(msg, args, chariot) {
+        this.client.settings[msg.guild.id].removeSummoner(args[0], msg.guild.id, this.client.pool);
 
-        msg.channel.createMessage(`Summoner "${summonerName}" has been removed.`);
+        msg.channel.createMessage(`Summoner "${args[0]}" has been removed.`);
     }
 }
 

@@ -14,7 +14,7 @@
     "chariot.js": "^3.3.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "mssql": "^6.2.0",
+    "mssql": "^6.2.1",
     "underscore": "^1.10.2"
   },
   "scripts": {
