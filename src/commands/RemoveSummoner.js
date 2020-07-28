@@ -1,8 +1,6 @@
 'use strict';
 
-const riotApi = require('../core/RiotApi');
 const Chariot = require('chariot.js');
-const { extend } = require('underscore');
 
 class RemoveSummoner extends Chariot.Command {
     constructor() {
@@ -31,11 +29,11 @@ class RemoveSummoner extends Chariot.Command {
             return;
         }
 
-        next(summoner.summonerName);
+       next();
     }
 
     async execute(msg, args, chariot) {
-        this.client.settings[msg.guild.id].removeSummoner(args[0], msg.guild.id, this.client.pool);
+        this.client.settings[msg.guild.id].removeSummoner(args[0]);
 
         msg.channel.createMessage(`Summoner "${args[0]}" has been removed.`);
     }

@@ -60,9 +60,11 @@ class EditSetting extends Chariot.Command {
         let settingValue = args[1];
 
         let oldSettingValue = this.client.settings[msg.guild.id][settingName];
-        this.client.settings[msg.guild.id][settingName] = settingValue;
 
-        await this.client.settings[msg.guild.id].writeSetting(settingName, args[1], msg.guild.id, this.client.pool);
+        await this.client.settings[msg.guild.id].writeSetting(settingName, args[1]);
+
+        if (settingName === 'checkInterval')
+            this.client.checkFeedIntervals[msg.guild.id].intervalLength = settingValue;
 
         msg.channel.createMessage(`Setting \`${settingName}\` has been changed. Old value: \`${oldSettingValue}\` New value: \`${settingValue}\``);
     }

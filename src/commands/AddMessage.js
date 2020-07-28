@@ -4,32 +4,35 @@ const Chariot = require('chariot.js');
 
 class AddMessage extends Chariot.Command {
     constructor() {
-        super(); 
+        super();
 
-        this.name = 'addMessage';
+        this.name = 'addmessage';
         this.help = {
-            usage: '!addMessage "{message}" Example: "{0} died {1} times"',
+            usage: '!ls addmessage "{0} died {1} times"',
             description: 'Adds a new message template to announcement list'
         }
     }
 
-    async execute(msg, args, chariot) {
+    async runPreconditions(msg, args, chariot, next) {
         let message = args.join(' ');
 
         if (!message.includes('{0}') || !message.includes('{1}')) {
-            msg.channel.createMessage('Incorrect message format. Format must be `!setMessage "{0} died {1} times`"');
+            msg.channel.createMessage('Incorrect message format. Format must be like `!ls setmessage "{0} died {1} times"`');
             return;
         }
 
         let messageFormatted = message.replace('"', '').replace('"', '');
 
-        messages.push(messageFormatted);
+        next(messageFormatted);
+    }
 
-        fs.writeFile('./messages.json', JSON.stringify({ "messages": messages }), err => {
-            if (err) console.log(err);
-        });
+    async execute(msg, args, chariot) {
+        let message = args.join(' ');
+        message = message.replace('"', '').replace('"', '');
 
-        msg.channel.createMessage(`Message has been added. Example: "${messageFormatted.format('Faker', 18)}"`);
+        this.client.settings[msg.guild.id].writeMessage(message)
+
+        msg.channel.createMessage(`Message has been added. Example: "${message.format('Faker', 18)}"`);
     }
 }
 

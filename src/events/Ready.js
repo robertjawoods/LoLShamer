@@ -5,8 +5,6 @@ const sql = require('mssql');
 const Settings = require('../core/Settings');
 const Timer = require('../core/Timer');
 const RiotApi = require('../core/RiotApi');
-const { result } = require('underscore');
-const { response } = require('express');
 
 class Ready extends Chariot.Event {
     constructor() {
@@ -35,45 +33,18 @@ class Ready extends Chariot.Event {
         });
 
         this.client.settings = {};
-        this.client.guildIntervals = {};
-
-        this.client.pool = new sql.ConnectionPool({
-            user: 'lol-shamer',
-            password: 'lolshamer123',
-            server: '35.187.79.60', // You can use 'localhost\\instance' to connect to named instance
-            database: 'default',
-        });
-
-        await this.client.pool.connect();
+        this.client.checkFeedIntervals = {};
 
         for (const guild of this.client.guilds) {
-            let guildSettings = new Settings();
-            let guildId = guild[0];
+            let guildSettings = this.client.settings[`${guild[0]}`] = await new Settings(guild[0]).init();
 
-            const settingsResult = await this.client.pool.request()
-                .input('guildId', guildId)
-                .query(
-                    'select SettingName as \'name\', SettingValue as \'value\' from dbo.Settings where GuildId = @guildId'
-                );
+            if (guildSettings.boundChannelId)
+                this.client.settings[`${guild[0]}`].boundChannel = this.client.getChannel(guildSettings.boundChannelId);                           
 
-            if (!settingsResult.recordset.length) {
-                guildSettings.writeDefaultSettings(guildId, this.client.pool);
-            }
+            this.client.checkFeedIntervals[`${guild[0]}`] = new Timer(guildSettings.checkInterval, () => {
+                let settings = this.client.settings[`${guild[0]}`];
 
-            const summonersResult = await this.client.pool.request()
-                .input('guildId', guildId)
-                .query(
-                    'select SummonerName as \'summonerName\', DiscordName as \'discordName\' from dbo.Summoners where GuildId = @guildId'
-                );
-
-            guildSettings.set(settingsResult.recordset, summonersResult.recordset);
-
-            this.client.settings[`${guildId}`] = guildSettings;
-
-            this.client.guildIntervals[guildId] = new Timer(0.1, () => {
-                let settings = this.client.settings[guildId];
-
-                if (!settings.boundChannelId)
+                if (!settings.boundChannel)
                     return;
 
                 let summoners = settings.summoners;
@@ -101,7 +72,7 @@ class Ready extends Chariot.Event {
                             let matchDetails = match.data;
                             let participantDetails = this.getParticipantDetails(accountId, match);
 
-                            // create message 
+                            // TODO: create message 
 
                             this.client.createMessage(settings.boundChannelId, 'message');
                         })

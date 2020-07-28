@@ -17,12 +17,12 @@ class DisplaySettings extends Chariot.Command {
         let settings = this.client.settings[msg.guild.id];
 
         let embed = new Chariot.RichEmbed()
-        .setColor('BLURPLE')
+        .setColor('RANDOM')
         .setTitle('Current Setting Values')
-        .setDescription('Displays the current settings values. Use `!editSetting {settingName} {newValue} to edit`.')
-        .addField('boundChannel', settings.boundChannel ? settings.boundChannel.name : 'None')       
+        .setDescription('Displays the current settings values. Use `!editSetting {settingName} {newValue}` to edit.')
+        .addField('boundChannel', settings.boundChannel ? `#${settings.boundChannel.name}` : 'None')       
 
-        let settingsFilter = ['summoners', 'boundChannelId'];
+        let settingsFilter = ['summoners', 'boundChannelId', 'guildId', 'sqlPool', 'boundChannel'];
 
         for (const setting in settings) {
             if (settingsFilter.includes(setting))

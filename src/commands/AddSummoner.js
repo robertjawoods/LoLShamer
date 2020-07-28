@@ -59,7 +59,7 @@ class AddSummoner extends Chariot.Command {
             inDatabase: false
         });
 
-        await this.client.settings[msg.guild.id].writeSummoners(msg.guild.id, this.client.pool);
+        this.client.settings[msg.guild.id].writeSummoners();
 
         msg.channel.createMessage(`Summoner "${summonerName}" has been added.`);
     }
