@@ -62,7 +62,8 @@ class Settings {
             this.summoners.push({
                 summonerName: summoner.summonerName,
                 discordName: summoner.discordName,
-                inDatabase: true
+                inDatabase: true, 
+                checkedGameIds: []
             });
         }
 
@@ -101,7 +102,7 @@ class Settings {
         for (const setting in this) {
             var settingValue = this[setting];
 
-            if (setting === 'summoners')
+            if (['summoners', 'guildId', 'sqlPool', 'messages'].includes(setting))
                 continue;
 
             await this.Pool().then(pool =>

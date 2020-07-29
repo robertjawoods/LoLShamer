@@ -22,7 +22,7 @@ class DisplaySettings extends Chariot.Command {
         .setDescription('Displays the current settings values. Use `!editSetting {settingName} {newValue}` to edit.')
         .addField('boundChannel', settings.boundChannel ? `#${settings.boundChannel.name}` : 'None')       
 
-        let settingsFilter = ['summoners', 'boundChannelId', 'guildId', 'sqlPool', 'boundChannel'];
+        let settingsFilter = ['summoners', 'boundChannelId', 'guildId', 'sqlPool', 'boundChannel', 'messages'];
 
         for (const setting in settings) {
             if (settingsFilter.includes(setting))

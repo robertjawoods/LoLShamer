@@ -52,7 +52,7 @@ class EditSetting extends Chariot.Command {
             return;
         }
 
-        next(settingName, newSettingValue);
+        next();
     }
 
     async execute(msg, args, chariot) {

@@ -18,9 +18,9 @@ class RiotApi {
         return this.axiosClient.get(`lol/summoner/v4/summoners/by-name/${encodedSummonerName}`);   
     }
 
-    getMatchesByAccountId = function(accountId) { 
+    getMatchesByAccountId = function(accountId, gamesInTheLastMinutes) { 
         // Get a date 90 mins ago, will get games that ended within that time 
-        let date = new Date(Date.now() - (settings.gamesInTheLastMinutes * 60000)).valueOf();
+        let date = new Date(Date.now() - (gamesInTheLastMinutes * 60000)).valueOf();
     
         return this.axiosClient.get(`lol/match/v4/matchlists/by-account/${accountId}`, {
             params: { 
